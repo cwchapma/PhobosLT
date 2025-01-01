@@ -24,8 +24,6 @@ const freqLookup = [
 ];
 
 const calib = document.getElementById("calib");
-const race = document.getElementById("race");
-const config = document.getElementById("config");
 
 var enterRssi = 120,
   exitRssi = 100;
@@ -51,21 +49,18 @@ var maxRssiValue = enterRssi + 10;
 var minRssiValue = exitRssi - 10;
 
 onload = function (e) {
-  calib.style.display = "none";
-  race.style.display = "none";
-  config.style.display = "block";
   fetch("/config")
     .then((response) => response.json())
     .then((config) => {
       console.log(config);
       setBandChannelIndex(config.freq);
       minLapInput.value = (parseFloat(config.minLap) / 10).toFixed(1);
-      updateMinLap(minLapInput, minLapInput.value);
+      updateMinLap(minLapInput.value);
       alarmThreshold.value = (parseFloat(config.alarm) / 10).toFixed(1);
-      updateAlarmThreshold(alarmThreshold, alarmThreshold.value);
+      updateAlarmThreshold(alarmThreshold.value);
       announcerSelect.selectedIndex = config.anType;
       announcerRateInput.value = (parseFloat(config.anRate) / 10).toFixed(1);
-      updateAnnouncerRate(announcerRateInput, announcerRateInput.value);
+      updateAnnouncerRate(announcerRateInput.value);
       enterRssiInput.value = config.enterRssi;
       updateEnterRssi(enterRssiInput, enterRssiInput.value);
       exitRssiInput.value = config.exitRssi;
@@ -159,25 +154,6 @@ function createRssiChart() {
 }
 
 function openTab(evt, tabName) {
-  // Declare all variables
-  var i, tabcontent, tablinks;
-
-  // Get all elements with class="tabcontent" and hide them
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-
-  // Get all elements with class="tablinks" and remove the class "active"
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-
-  // Show the current tab, and add an "active" class to the button that opened the tab
-  document.getElementById(tabName).style.display = "block";
-  evt.currentTarget.className += " active";
-
   // if event comes from calibration tab, signal to start sending RSSI events
   if (tabName === 'calib' && !rssiSending) {
     fetch('/timer/rssiStart', {
@@ -263,17 +239,17 @@ bcf.addEventListener("change", function handleChange(event) {
   populateFreqOutput();
 });
 
-function updateAnnouncerRate(obj, value) {
+function updateAnnouncerRate(value) {
   announcerRate = parseFloat(value);
-  $(obj).parent().find("span").text(announcerRate.toFixed(1));
+  document.getElementById("announcerRateText").textContent = announcerRate.toFixed(1);
 }
 
-function updateMinLap(obj, value) {
-  $(obj).parent().find("span").text(parseFloat(value).toFixed(1) + 's');
+function updateMinLap(value) {
+  document.getElementById("minLapText").textContent = parseFloat(value).toFixed(1) + 's';
 }
 
-function updateAlarmThreshold(obj, value) {
-  $(obj).parent().find("span").text(parseFloat(value).toFixed(1) + 'v');
+function updateAlarmThreshold(value) {
+  document.getElementById("alarmThresholdText").textContent = parseFloat(value).toFixed(1) + 'v';
 }
 
 // function getAnnouncerVoices() {
